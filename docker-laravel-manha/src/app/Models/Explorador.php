@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Explorador extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['nome', 'idade', 'latitude', 'longitude'];
+    protected $table = 'exploradores';
+
+    public function itens()
+    {
+        return $this->hasMany(Item::class);
+    }
 }

@@ -11,6 +11,7 @@ class ExploradorController extends Controller
 
     public function store(Request $request)
     {
+
         $request->validate([
             'nome' => 'required|string',
             'idade' => 'required|integer',
@@ -53,10 +54,34 @@ class ExploradorController extends Controller
     }
 
 
+
+
     public function trocarItens(Request $request)
     {
+        $request->validate([
+            'explorador_id_1' => 'required|exists:exploradores,id',
+            'explorador_id_2' => 'required|exists:exploradores,id',
+            'itens_explorador_1' => 'required|array',
+            'itens_explorador_2' => 'required|array',
+        ]);
 
+        $explorador1 = Explorador::findOrFail($request->explorador_id_1);
+        $explorador2 = Explorador::findOrFail($request->explorador_id_2);
+
+        $valorTotal1 = Item::whereIn('id', $request->itens_explorador_1)->sum('valor');
+
+        $valorTotal2 = Item::whereIn('id', $request->itens_explorador_2)->sum('valor');
+
+        if ($valorTotal1 !== $valorTotal2) {
+            return response()->json(['message' => 'Os valores dos itens não são equivalentes'], 400);
+        }
+
+        Item::whereIn('id', $request->itens_explorador_1)->update(['explorador_id' => $explorador2->id]);
+        Item::whereIn('id', $request->itens_explorador_2)->update(['explorador_id' => $explorador1->id]);
+
+        return response()->json(['message' => 'Troca realizada com sucesso']);
     }
+
 
 
     public function show($id)

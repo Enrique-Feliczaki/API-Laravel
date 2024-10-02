@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('itens', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('explorador_id')->constrained()->onDelete('cascade');
+            $table->foreignId('explorador_id')->constrained('exploradores')->onDelete('cascade');
             $table->string('nome');
             $table->decimal('valor');
             $table->decimal('latitude', 10, 7);
